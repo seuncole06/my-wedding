@@ -379,6 +379,13 @@ def build_rsvp():
           <input id="rsvp-name" name="name" type="text" required placeholder="Your name">
         </div>
         <div>
+          <label for="rsvp-side">Whose guest are you?</label>
+          <select id="rsvp-side" name="side" required>
+            <option value="Bride's side">Bride's side</option>
+            <option value="Groom's side">Groom's side</option>
+          </select>
+        </div>
+        <div>
           <label for="rsvp-attending">Will you be attending?</label>
           <select id="rsvp-attending" name="attending" required>
             <option value="Joyfully accepts">Joyfully accepts</option>
