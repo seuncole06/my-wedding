@@ -1,0 +1,4 @@
+[build]
+  base = "adeola-oluwaseun-wedding-site/wedding-site"
+  command = "python3 build_site.py"
+  publish = "dist"

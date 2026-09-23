@@ -22,7 +22,7 @@ This is a static site (no backend/database), so the RSVP form currently
 opens the guest's email app with their answers pre-filled, addressed to
 RSVP_EMAIL below. If you want responses to land in a spreadsheet instead,
 swap the <form> in the "rsvp" section for a Google Form or Tally.so
-embed/link — ask me and I can wire that in.
+embed/link; ask me and I can wire that in.
 """
 
 import os
@@ -30,7 +30,7 @@ import shutil
 from datetime import datetime
 
 # ============================================================
-# CONFIG — edit everything here, nothing else needs to change
+# CONFIG: edit everything here, nothing else needs to change
 # ============================================================
 
 CONFIG = {
@@ -39,7 +39,7 @@ CONFIG = {
     "bride_full": "Adeola Balogun",
     "groom_full": "Oluwaseun Solagbade",
 
-    # Used for the live countdown — 24h format, site's local time
+    # Used for the live countdown: 24h format, site's local time
     "wedding_datetime_iso": "2027-01-30T12:00:00",
     "wedding_date_display": "30th January 2027",
     "wedding_time_display": "12:00 PM",
@@ -55,14 +55,30 @@ CONFIG = {
                  "so we can prepare adequately for them.",
 
     "how_we_met": (
-        "On the 14th of January 2021, I was heading back to Abeokuta after "
-        "my dad's birthday when I saw her and her sister on the bus. I tried "
-        "to get her number — she said no. So I found another way: I got her "
-        "to like a post of mine on Facebook, and that's how her number found "
-        "its way to me. She was a 100 level student at the time, so I stayed "
-        "a friend until that June, when we finally started dating. I waited "
-        "for her to finish school and settle into work before I asked her to "
-        "be my wife. Five years later, here we are."
+        "It all started on the 14th of January 2021.\n\n"
+        "I was heading back to Abeokuta after celebrating my dad's birthday "
+        "when, on the bus, I spotted her and her sister. Of course, I "
+        "immediately thought, \'Okay... I need this girl's number.\' 😂\n\n"
+        "So I asked.\n\n"
+        "She said NO 😭\n\n"
+        "Now, a normal person might have taken the rejection and moved on. "
+        "But apparently, I was not normal. 😂 I decided to find another route.\n\n"
+        "Somehow, I got her to like one of my posts on Facebook, and let's "
+        "just say... that little like became the beginning of a very "
+        "interesting investigation. Before long, her number somehow found "
+        "its way to me. 😌\n\n"
+        "At the time, she was a 100-level student, so I played it cool. We "
+        "became friends, talked, laughed, and slowly got closer.\n\n"
+        "Then came June... and friendship officially became something more. ❤️\n\n"
+        "I stayed by her side, watched her grow through school, and patiently "
+        "waited until she finished her studies and settled into work. Then, "
+        "five years after that first bus encounter, I finally asked the "
+        "biggest question of my life: Will you be my wife? 💍\n\n"
+        "And now, here we are.\n\n"
+        "Funny how one bus ride, one rejected request for a phone number, and "
+        "one Facebook like somehow led us here.\n\n"
+        "Five years later, I guess that 'NO' was just the beginning of our "
+        "YES. ❤️"
     ),
 
     "vow_groom": (
@@ -73,7 +89,7 @@ CONFIG = {
         "well as her desire to keep growing and becoming better.\n\n"
         "She is someone I can communicate with, build with, and face life "
         "alongside as a true partner. I love her heart, her character, her "
-        "strength, her beautiful spirit — and yes, I love her beauty too. "
+        "strength, her beautiful spirit, and yes, I love her beauty too. "
         "But beyond how she looks, I love the woman she is and the woman "
         "she is continually becoming in Christ. I believe we can build a "
         "marriage grounded in faith, love, truth, commitment, and choosing "
@@ -107,29 +123,29 @@ CONFIG = {
     "wishlist_url": "https://wishgum.com/w/adecole",
 
     # ---- Image assignments ----
-    # All files live in static/images/ — swap any filename below for a
+    # All files live in static/images/. Swap any filename below for a
     # different photo any time; nothing else needs to change.
     "images": {
-        "hero": "traditional-close.jpg",
-        "countdown_bg": "registry-full.jpg",
-        "story": "gallery-8.jpg",
-        "groom_portrait": "groom-solo-casual-bw.jpg",
-        "bride_portrait": "bride-solo-studio-1.jpg",
+        "hero": "_DSC8690.JPG",
+        "countdown_bg": "_DSC8721.JPG",
+        "story": "_DSC8689.JPG",
+        "groom_portrait": "_DSC8689.JPG",
+        "bride_portrait": "_DSC1402.JPG",
         "gallery": [
-            "registry-kiss-bw.jpg",
-            "gallery-1.jpg",
-            "registry-embrace.jpg",
+            "_DSC1402.JPG",
+            "_DSC8689.JPG",
+            "_DSC8690.JPG",
+            "_DSC8721.JPG",
             "gallery-9.jpg",
             "bride-solo-studio-2.jpg",
             "gallery-2.jpg",
-            "registry-carry-bw.jpg",
             "gallery-10.jpg",
         ],
     },
 }
 
 # ============================================================
-# HTML BUILDING — you shouldn't need to touch anything below
+# HTML BUILDING: you shouldn't need to touch anything below
 # ============================================================
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -197,13 +213,12 @@ def build_story():
     <div class="wrap">
       <div class="section-head">
         <div class="eyebrow">How it began</div>
-        <h2>Our Story</h2>
+        <h2>How We Met ❤️</h2>
         <div class="rule"></div>
       </div>
       <div class="story-flex">
         <div class="story-text">
-          <p class="lead">14th January, 2021.</p>
-          <p>{CONFIG['how_we_met']}</p>
+          <p>{nl2br(CONFIG['how_we_met'])}</p>
         </div>
         <div class="img-col">
           <img src="{img('story')}" alt="{CONFIG['bride']} and {CONFIG['groom']}">
@@ -290,7 +305,7 @@ def build_gallery():
 
 def build_rsvp():
     contacts_html = "\n".join(
-        f"""<div><span class="who">{c['relation']}</span>{c['name']} — {c['phone']}</div>"""
+        f"""<div><span class="who">{c['relation']}</span>{c['name']} | {c['phone']}</div>"""
         for c in CONFIG['rsvp_contacts']
     )
     return f"""
@@ -352,7 +367,7 @@ def build_gifts():
         <div class="rule"></div>
       </div>
       <p class="lead">
-        But for those asking (and insisting!) — we have a wishlist you can pick items from.
+        But for those asking (and insisting!), we have a wishlist you can pick items from.
         We're also happy to receive a little help toward our future goals: our house fund,
         honeymoon fund, car fund, or however God might be leading you to support us.
       </p>
@@ -364,7 +379,7 @@ def build_gifts():
         </div>
       </div>
       <p class="email-note">
-        For our updated gift list, reach {CONFIG['groom']} directly —
+        For our updated gift list, reach {CONFIG['groom']} directly:
         <a href="mailto:{CONFIG['contact_email']}">{CONFIG['contact_email']}</a><br>
         Please confirm by {CONFIG['gift_deadline']}
       </p>
@@ -386,7 +401,7 @@ def build_page():
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{CONFIG['bride']} &amp; {CONFIG['groom']} — {CONFIG['wedding_date_display']}</title>
+<title>{CONFIG['bride']} &amp; {CONFIG['groom']} | {CONFIG['wedding_date_display']}</title>
 <meta name="description" content="Join {CONFIG['bride']} and {CONFIG['groom']} as they celebrate their wedding on {CONFIG['wedding_date_display']} at {CONFIG['venue_name']}, Lagos.">
 <link rel="stylesheet" href="static/css/style.css">
 </head>
