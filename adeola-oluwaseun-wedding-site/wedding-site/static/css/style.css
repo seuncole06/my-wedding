@@ -437,78 +437,57 @@ section[id] { scroll-margin-top: 84px; }
 .rsvp .eyebrow { color: var(--gold-light); }
 .rsvp h2 { color: var(--ivory); }
 .rsvp p.lead { max-width: 46ch; margin: 18px auto 0; color: var(--ivory); opacity: .9; }
-.rsvp-form {
-  max-width: 480px;
-  margin: 40px auto 0;
-  display: grid;
-  gap: 16px;
-  text-align: left;
+/* People to message on WhatsApp to reserve a seat */
+.rsvp-people {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 22px;
+  max-width: 720px;
+  margin: 44px auto 0;
 }
-.rsvp-form label {
-  font-size: 12px;
-  letter-spacing: 0.1em;
+.person-card {
+  flex: 1 1 240px;
+  max-width: 300px;
+  background: rgba(251, 247, 240, 0.06);
+  border: 1px solid rgba(251, 247, 240, 0.28);
+  border-radius: 6px;
+  padding: 30px 24px;
+  text-align: center;
+}
+.person-role {
+  font-size: 11px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--gold-light);
-  margin-bottom: 6px;
-  display: block;
 }
-.rsvp-form input, .rsvp-form select, .rsvp-form textarea {
-  width: 100%;
-  padding: 12px 14px;
-  background: rgba(251,247,240,0.08);
-  border: 1px solid rgba(251,247,240,0.35);
-  border-radius: 4px;
-  color: var(--ivory);
-  font-family: 'Jost', sans-serif;
-  font-size: 15px;
-}
-.rsvp-form input::placeholder, .rsvp-form textarea::placeholder { color: rgba(251,247,240,0.5); }
-.rsvp-form button {
+.person-name {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 18px;
+  font-size: 26px;
+  font-style: italic;
+  color: var(--ivory);
+  margin: 6px 0 4px;
+}
+.person-phone {
+  font-size: 14px;
   letter-spacing: 0.04em;
+  color: rgba(251, 247, 240, 0.75);
+  margin-bottom: 18px;
+}
+a.wa-btn {
+  display: inline-block;
   background: var(--gold-light);
   color: var(--burgundy-deep);
-  border: none;
-  padding: 14px;
+  text-decoration: none;
+  padding: 11px 20px;
   border-radius: 4px;
-  cursor: pointer;
-  margin-top: 6px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  letter-spacing: 0.03em;
+  transition: background .3s ease;
 }
-.rsvp-form button:hover { background: var(--ivory); }
-/* Embedded Google Form / Tally form */
-.rsvp-embed {
-  max-width: 620px;
-  margin: 40px auto 0;
-  background: var(--ivory);
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
-}
-.rsvp-embed iframe {
-  display: block;
-  width: 100%;
-  /* Sized to the measured height of the embedded form so guests do not have
-     to scroll inside the frame. Bump this if questions are added. */
-  height: 1560px;
-  border: 0;
-}
-.rsvp-alt {
-  margin-top: 16px;
-  font-size: 13.5px;
-  color: rgba(251, 247, 240, 0.75);
-}
-.rsvp-alt a { color: var(--gold-light); }
-.rsvp-contacts {
-  margin-top: 40px;
-  display: flex;
-  justify-content: center;
-  gap: 48px;
-  flex-wrap: wrap;
-  font-size: 14px;
-}
-.rsvp-contacts .who { color: var(--gold-light); letter-spacing: 0.1em; text-transform: uppercase; font-size: 11px; display:block; margin-bottom: 4px;}
-.rsvp-deadline { margin-top: 28px; font-size: 13px; color: var(--gold-light); letter-spacing: 0.05em; }
+a.wa-btn:hover { background: var(--ivory); }
+.rsvp-deadline { margin-top: 34px; font-size: 13px; color: var(--gold-light); letter-spacing: 0.05em; }
 
 /* ---------- Gifts ---------- */
 .gifts { background: var(--ivory); text-align: center; }
@@ -564,8 +543,6 @@ footer .fine { font-size: 12px; letter-spacing: 0.1em; color: var(--gold-light);
   .vows-grid { grid-template-columns: 1fr; }
   .details-grid { grid-template-columns: 1fr; }
   .gallery-grid { grid-template-columns: repeat(2, 1fr); }
-
-  .rsvp-embed iframe { height: 1700px; }
 
   /* Timeline collapses to a single left-aligned rail */
   .timeline::before { left: 4px; transform: none; }

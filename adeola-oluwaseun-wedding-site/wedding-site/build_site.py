@@ -18,13 +18,10 @@ HOW TO USE
 5. Open dist/index.html directly in a browser to preview locally first.
 
 RSVP NOTE
-This is a static site, so it cannot store submissions on its own. Set
-rsvp_form_url below to a Google Form or Tally link and the RSVP section
-embeds that form instead (responses land in a Google Sheet or the Tally
-dashboard). While rsvp_form_url is empty, the built-in form is used: it
-opens the guest's email app with their answers pre-filled and addressed
-to rsvp_email. Note that a guest with no mail app configured will get
-nothing from that flow, which is why the embed is preferred.
+The site has no backend, so guests do not submit anything here. Instead the
+RSVP section lists the people guests can message on WhatsApp to reserve a
+seat, with a pre-filled message. See rsvp_couple_contacts and rsvp_contacts
+below to change who is listed.
 """
 
 import os
@@ -32,6 +29,7 @@ import re
 import shutil
 from datetime import datetime
 from html import escape
+from urllib.parse import quote
 
 # ============================================================
 # CONFIG: edit everything here, nothing else needs to change
@@ -133,19 +131,22 @@ CONFIG = {
 
     "rsvp_deadline": "December 30th, 2026",
     "gift_deadline": "November 30th, 2026",
+
+    # ---- RSVP contacts ----
+    # Guests message one of these people on WhatsApp to reserve a seat.
+    # country_code turns local numbers like 0816... into the international
+    # format WhatsApp needs (234816...).
+    "country_code": "234",
+    # The couple's own numbers. Drop them in here and their cards appear
+    # automatically; any entry without a phone is skipped.
+    "rsvp_couple_contacts": [
+        {"name": "Adeola", "phone": "", "relation": "The Bride"},
+        {"name": "Oluwaseun", "phone": "", "relation": "The Groom"},
+    ],
     "rsvp_contacts": [
         {"name": "Tosin", "phone": "08164288605", "relation": "Bride's Brother"},
         {"name": "Omowunmi", "phone": "07043707011", "relation": "Groom's Sister"},
     ],
-    "rsvp_email": "solagbadeoluwaseun6@gmail.com",
-
-    # Paste your RSVP form link here to embed it (Google Form or Tally).
-    # Google Form: Form > Send > < > Embed HTML, or just the normal share link.
-    # Tally:       Share > copy the link (https://tally.so/r/XXXXXX).
-    # Leave as "" to keep the built-in form that opens the guest's email app.
-    # Short link for this form: https://forms.gle/dgTaBYdB8ubyoKbQA
-    "rsvp_form_url": "https://docs.google.com/forms/d/e/"
-                      "1FAIpQLSczb4vKAKp-0ia-DGU57hoT8cT2Lh-6G-0J-DYtUQWrxH4V4g/viewform",
     "contact_email": "solagbadeoluwaseun6@gmail.com",
 
     "wishlist_url": "https://wishgum.com/w/adecole",
@@ -372,120 +373,51 @@ def build_gallery():
   </section>"""
 
 
-def rsvp_embed_problem(url):
-    """Why the configured RSVP link cannot be embedded, or None if it is fine."""
-    u = (url or "").strip()
-    if not u:
-        return None
-    if "/spreadsheets/d/" in u:
-        return ("rsvp_form_url is a Google Sheets link. A spreadsheet is not a form, and "
-                "embedding it would expose every guest's details on the public page. "
-                "Use the Google Form link instead: in the Form, click Send > Link "
-                "(https://docs.google.com/forms/d/e/.../viewform), and point the form's "
-                "responses at that spreadsheet from the Responses tab.")
-    if ("docs.google.com/forms" not in u and "forms.gle" not in u
-            and "tally.so" not in u):
-        return ("rsvp_form_url is not a recognised Google Form or Tally link, so the "
-                "built-in email form is being used instead.")
-    return None
-
-
-def rsvp_embed_src(url):
-    """Turn a Google Form or Tally share link into an embeddable src.
-
-    "" / None -> "" (means: fall back to the built-in email form).
-    Pass either the plain share link or the full <iframe> snippet.
-    """
-    u = (url or "").strip()
-    if not u:
+def wa_link(phone, message):
+    """Build a wa.me chat link from a local or international phone number."""
+    digits = re.sub(r"\D", "", phone or "")
+    if not digits:
         return ""
-    # If the whole iframe snippet was pasted, pull the src out of it.
-    if "<iframe" in u.lower():
-        match = re.search(r'src="([^"]+)"', u)
-        u = match.group(1) if match else ""
-    if not u or rsvp_embed_problem(u):
-        return ""
-
-    joiner = "&" if "?" in u else "?"
-    if "tally.so/r/" in u:
-        u = u.replace("tally.so/r/", "tally.so/embed/")
-        return u + joiner + "alignLeft=1&hideTitle=1&transparentBackground=1"
-    if "docs.google.com/forms" in u and "embedded=true" not in u:
-        return u + joiner + "embedded=true"
-    return u
+    code = CONFIG["country_code"]
+    if digits.startswith("0") and len(digits) == 11:
+        digits = code + digits[1:]
+    elif len(digits) == 10 and not digits.startswith(code):
+        digits = code + digits
+    return "https://wa.me/" + digits + "?text=" + quote(message)
 
 
-def _rsvp_form_markup():
-    """Built-in form: opens the guest's email app with the answers filled in."""
-    return f"""      <form class="rsvp-form" id="rsvp-form" data-rsvp-email="{CONFIG['rsvp_email']}">
-        <div>
-          <label for="rsvp-name">Full name</label>
-          <input id="rsvp-name" name="name" type="text" required placeholder="Your name">
-        </div>
-        <div>
-          <label for="rsvp-side">Whose guest are you?</label>
-          <select id="rsvp-side" name="side" required>
-            <option value="Bride's side">Bride's side</option>
-            <option value="Groom's side">Groom's side</option>
-          </select>
-        </div>
-        <div>
-          <label for="rsvp-attending">Will you be attending?</label>
-          <select id="rsvp-attending" name="attending" required>
-            <option value="Joyfully accepts">Joyfully accepts</option>
-            <option value="Regretfully declines">Regretfully declines</option>
-          </select>
-        </div>
-        <div>
-          <label for="rsvp-guests">Number of guests (including you)</label>
-          <input id="rsvp-guests" name="guests" type="text" placeholder="e.g. 2">
-        </div>
-        <div>
-          <label for="rsvp-kids">Coming with kids?</label>
-          <select id="rsvp-kids" name="kids">
-            <option value="No">No</option>
-            <option value="Yes">Yes</option>
-          </select>
-        </div>
-        <div>
-          <label for="rsvp-message">Message for the couple (optional)</label>
-          <textarea id="rsvp-message" name="message" rows="3" placeholder="Leave us a note..."></textarea>
-        </div>
-        <button type="submit">Send RSVP</button>
-      </form>"""
+def _rsvp_message(person):
+    return (f"Hi {person['name']}, I'd like to reserve a seat at "
+            f"{CONFIG['bride']} & {CONFIG['groom']}'s wedding on "
+            f"{CONFIG['wedding_date_display']}. My name is ")
 
 
-def _rsvp_embed_markup():
-    """Embedded Google Form / Tally form (responses collect in a Sheet)."""
-    url = CONFIG.get('rsvp_form_url', '')
-    src = rsvp_embed_src(url)
-    return f"""      <div class="rsvp-embed">
-        <iframe src="{escape(src)}" title="RSVP form"
-                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
-      <p class="rsvp-alt">
-        Form not loading?
-        <a href="{escape(url)}" target="_blank" rel="noopener">Open it in a new tab</a>.
-      </p>"""
+def _person_card(person):
+    phone = person.get("phone", "")
+    link = wa_link(phone, _rsvp_message(person))
+    button = ('<a class="wa-btn" href="' + escape(link) + '" target="_blank" '
+              'rel="noopener">Chat on WhatsApp</a>') if link else ""
+    return f"""      <div class="person-card">
+        <div class="person-role">{escape(person.get('relation', ''))}</div>
+        <div class="person-name">{escape(person['name'])}</div>
+        <div class="person-phone">{escape(phone)}</div>
+        {button}
+      </div>"""
 
 
 def build_rsvp():
-    contacts_html = "\n".join(
-        f"""<div><span class="who">{c['relation']}</span>{c['name']} | {c['phone']}</div>"""
-        for c in CONFIG['rsvp_contacts']
-    )
-    body = _rsvp_embed_markup() if rsvp_embed_src(CONFIG.get('rsvp_form_url', '')) else _rsvp_form_markup()
+    people = [p for p in CONFIG['rsvp_couple_contacts'] if p.get('phone')]
+    people += [p for p in CONFIG['rsvp_contacts'] if p.get('phone')]
+    cards = "\n".join(_person_card(p) for p in people)
     return f"""
   <section class="rsvp" id="rsvp">
     <div class="wrap">
       <div class="eyebrow">You're invited</div>
       <h2>RSVP</h2>
-      <p class="lead">We've reserved a seat just for you. Kindly confirm so we can plan with love.</p>
+      <p class="lead">We've reserved a seat just for you. Send a WhatsApp message to any of the people below to let us know you're coming, and we'll keep your seat warm.</p>
 
-{body}
-
-      <div class="rsvp-contacts">
-        {contacts_html}
+      <div class="rsvp-people">
+{cards}
       </div>
       <div class="rsvp-deadline">Kindly confirm by {CONFIG['rsvp_deadline']}</div>
     </div>
@@ -573,12 +505,6 @@ def main():
     html = build_page()
     with open(os.path.join(DIST, "index.html"), "w", encoding="utf-8") as f:
         f.write(html)
-
-    problem = rsvp_embed_problem(CONFIG.get("rsvp_form_url", ""))
-    if problem:
-        print("")
-        print("WARNING about the RSVP form:")
-        print("  " + problem)
 
     print(f"Done. Open {os.path.join(DIST, 'index.html')} in a browser to preview,")
     print("or upload the contents of the dist/ folder to your host.")

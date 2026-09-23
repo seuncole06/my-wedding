@@ -75,32 +75,3 @@
   });
 })();
 
-// ---- RSVP form (static site: opens email client with details pre-filled) ----
-(function () {
-  var form = document.getElementById('rsvp-form');
-  if (!form) return;
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var name = form.name.value.trim();
-    var side = form.side.value;
-    var attending = form.attending.value;
-    var guests = form.guests.value.trim();
-    var kids = form.kids.value;
-    var message = form.message.value.trim();
-
-    var subject = 'RSVP - ' + name + ' (' + side + ', ' + attending + ')';
-    var body =
-      'Name: ' + name + '\n' +
-      'Guest of: ' + side + '\n' +
-      'Attending: ' + attending + '\n' +
-      'Number of guests: ' + guests + '\n' +
-      'Coming with kids: ' + kids + '\n' +
-      'Message: ' + message;
-
-    var mailto = 'mailto:' + form.dataset.rsvpEmail +
-      '?subject=' + encodeURIComponent(subject) +
-      '&body=' + encodeURIComponent(body);
-
-    window.location.href = mailto;
-  });
-})();
