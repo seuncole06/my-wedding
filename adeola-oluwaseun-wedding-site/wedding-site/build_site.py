@@ -126,19 +126,19 @@ CONFIG = {
     # All files live in static/images/. Swap any filename below for a
     # different photo any time; nothing else needs to change.
     "images": {
-        "hero": "_DSC8690.JPG",
-        "countdown_bg": "_DSC8721.JPG",
-        "story": "_DSC8689.JPG",
-        "groom_portrait": "_DSC8689.JPG",
-        "bride_portrait": "_DSC1402.JPG",
+        "hero": "traditional-close.jpg",
+        "countdown_bg": "registry-full.jpg",
+        "story": "gallery-8.jpg",
+        "groom_portrait": "groom-solo-casual-bw.jpg",
+        "bride_portrait": "bride-solo-studio-1.jpg",
         "gallery": [
-            "_DSC1402.JPG",
-            "_DSC8689.JPG",
-            "_DSC8690.JPG",
-            "_DSC8721.JPG",
+            "registry-kiss-bw.jpg",
+            "gallery-1.jpg",
+            "registry-embrace.jpg",
             "gallery-9.jpg",
             "bride-solo-studio-2.jpg",
             "gallery-2.jpg",
+            "registry-carry-bw.jpg",
             "gallery-10.jpg",
         ],
     },
