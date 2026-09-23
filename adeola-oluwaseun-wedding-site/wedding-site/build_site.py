@@ -143,7 +143,9 @@ CONFIG = {
     # Google Form: Form > Send > < > Embed HTML, or just the normal share link.
     # Tally:       Share > copy the link (https://tally.so/r/XXXXXX).
     # Leave as "" to keep the built-in form that opens the guest's email app.
-    "rsvp_form_url": "",
+    # Short link for this form: https://forms.gle/dgTaBYdB8ubyoKbQA
+    "rsvp_form_url": "https://docs.google.com/forms/d/e/"
+                      "1FAIpQLSczb4vKAKp-0ia-DGU57hoT8cT2Lh-6G-0J-DYtUQWrxH4V4g/viewform",
     "contact_email": "solagbadeoluwaseun6@gmail.com",
 
     "wishlist_url": "https://wishgum.com/w/adecole",
@@ -381,7 +383,8 @@ def rsvp_embed_problem(url):
                 "Use the Google Form link instead: in the Form, click Send > Link "
                 "(https://docs.google.com/forms/d/e/.../viewform), and point the form's "
                 "responses at that spreadsheet from the Responses tab.")
-    if "docs.google.com/forms" not in u and "tally.so" not in u:
+    if ("docs.google.com/forms" not in u and "forms.gle" not in u
+            and "tally.so" not in u):
         return ("rsvp_form_url is not a recognised Google Form or Tally link, so the "
                 "built-in email form is being used instead.")
     return None
