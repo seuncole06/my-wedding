@@ -51,7 +51,7 @@ CONFIG = {
                       "New Oko Oba / Abule Egba, Lagos State",
 
     "attire": "All white party",
-    "colors_display": "Burgundy, Gold & White",
+    "colors_display": "White and Gold",
 
     "kids_note": "Please let us know if you'll be coming with your kids "
                  "so we can prepare adequately for them.",
@@ -314,7 +314,7 @@ def build_details():
         </div>
         <div class="detail-card">
           <h3>Attire</h3>
-          <p><span class="accent">{CONFIG['attire']}</span><br>Colour theme: {CONFIG['colors_display']}</p>
+          <p><span class="accent">{CONFIG['attire']}</span><br>{CONFIG['colors_display']}</p>
         </div>
         <div class="detail-card">
           <h3>Kids</h3>
