@@ -131,8 +131,8 @@ CONFIG = {
     "rsvp_deadline": "December 30th, 2026",
     "gift_deadline": "November 30th, 2026",
     "rsvp_contacts": [
-        {"name": "Tosin", "phone": "08164288605", "relation": "Groom's Sister"},
-        {"name": "Omowunmi", "phone": "07043707011", "relation": "Bride's Brother"},
+        {"name": "Tosin", "phone": "08164288605", "relation": "Bride's Brother"},
+        {"name": "Omowunmi", "phone": "07043707011", "relation": "Groom's Sister"},
     ],
     "rsvp_email": "solagbadeoluwaseun6@gmail.com",
     "contact_email": "solagbadeoluwaseun6@gmail.com",
