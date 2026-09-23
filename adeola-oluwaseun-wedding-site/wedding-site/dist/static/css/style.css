@@ -476,6 +476,27 @@ section[id] { scroll-margin-top: 84px; }
   margin-top: 6px;
 }
 .rsvp-form button:hover { background: var(--ivory); }
+/* Embedded Google Form / Tally form */
+.rsvp-embed {
+  max-width: 620px;
+  margin: 40px auto 0;
+  background: var(--ivory);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+}
+.rsvp-embed iframe {
+  display: block;
+  width: 100%;
+  height: 900px;
+  border: 0;
+}
+.rsvp-alt {
+  margin-top: 16px;
+  font-size: 13.5px;
+  color: rgba(251, 247, 240, 0.75);
+}
+.rsvp-alt a { color: var(--gold-light); }
 .rsvp-contacts {
   margin-top: 40px;
   display: flex;
@@ -541,6 +562,8 @@ footer .fine { font-size: 12px; letter-spacing: 0.1em; color: var(--gold-light);
   .vows-grid { grid-template-columns: 1fr; }
   .details-grid { grid-template-columns: 1fr; }
   .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .rsvp-embed iframe { height: 780px; }
 
   /* Timeline collapses to a single left-aligned rail */
   .timeline::before { left: 4px; transform: none; }

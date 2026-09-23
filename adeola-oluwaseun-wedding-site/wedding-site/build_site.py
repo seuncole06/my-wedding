@@ -18,11 +18,13 @@ HOW TO USE
 5. Open dist/index.html directly in a browser to preview locally first.
 
 RSVP NOTE
-This is a static site (no backend/database), so the RSVP form currently
-opens the guest's email app with their answers pre-filled, addressed to
-RSVP_EMAIL below. If you want responses to land in a spreadsheet instead,
-swap the <form> in the "rsvp" section for a Google Form or Tally.so
-embed/link; ask me and I can wire that in.
+This is a static site, so it cannot store submissions on its own. Set
+rsvp_form_url below to a Google Form or Tally link and the RSVP section
+embeds that form instead (responses land in a Google Sheet or the Tally
+dashboard). While rsvp_form_url is empty, the built-in form is used: it
+opens the guest's email app with their answers pre-filled and addressed
+to rsvp_email. Note that a guest with no mail app configured will get
+nothing from that flow, which is why the embed is preferred.
 """
 
 import os
@@ -135,6 +137,12 @@ CONFIG = {
         {"name": "Omowunmi", "phone": "07043707011", "relation": "Groom's Sister"},
     ],
     "rsvp_email": "solagbadeoluwaseun6@gmail.com",
+
+    # Paste your RSVP form link here to embed it (Google Form or Tally).
+    # Google Form: Form > Send > < > Embed HTML, or just the normal share link.
+    # Tally:       Share > copy the link (https://tally.so/r/XXXXXX).
+    # Leave as "" to keep the built-in form that opens the guest's email app.
+    "rsvp_form_url": "",
     "contact_email": "solagbadeoluwaseun6@gmail.com",
 
     "wishlist_url": "https://wishgum.com/w/adecole",
@@ -361,19 +369,33 @@ def build_gallery():
   </section>"""
 
 
-def build_rsvp():
-    contacts_html = "\n".join(
-        f"""<div><span class="who">{c['relation']}</span>{c['name']} | {c['phone']}</div>"""
-        for c in CONFIG['rsvp_contacts']
-    )
-    return f"""
-  <section class="rsvp" id="rsvp">
-    <div class="wrap">
-      <div class="eyebrow">You're invited</div>
-      <h2>RSVP</h2>
-      <p class="lead">We've reserved a seat just for you. Kindly confirm so we can plan with love.</p>
+def rsvp_embed_src(url):
+    """Turn a Google Form or Tally share link into an embeddable src.
 
-      <form class="rsvp-form" id="rsvp-form" data-rsvp-email="{CONFIG['rsvp_email']}">
+    "" / None -> "" (means: fall back to the built-in email form).
+    Pass either the plain share link or the full <iframe> snippet.
+    """
+    u = (url or "").strip()
+    if not u:
+        return ""
+    # If the whole iframe snippet was pasted, pull the src out of it.
+    if "<iframe" in u.lower():
+        import re
+        match = re.search(r'src="([^"]+)"', u)
+        u = match.group(1) if match else ""
+
+    joiner = "&" if "?" in u else "?"
+    if "tally.so/r/" in u:
+        u = u.replace("tally.so/r/", "tally.so/embed/")
+        return u + joiner + "alignLeft=1&hideTitle=1&transparentBackground=1"
+    if "docs.google.com/forms" in u and "embedded=true" not in u:
+        return u + joiner + "embedded=true"
+    return u
+
+
+def _rsvp_form_markup():
+    """Built-in form: opens the guest's email app with the answers filled in."""
+    return f"""      <form class="rsvp-form" id="rsvp-form" data-rsvp-email="{CONFIG['rsvp_email']}">
         <div>
           <label for="rsvp-name">Full name</label>
           <input id="rsvp-name" name="name" type="text" required placeholder="Your name">
@@ -408,7 +430,37 @@ def build_rsvp():
           <textarea id="rsvp-message" name="message" rows="3" placeholder="Leave us a note..."></textarea>
         </div>
         <button type="submit">Send RSVP</button>
-      </form>
+      </form>"""
+
+
+def _rsvp_embed_markup():
+    """Embedded Google Form / Tally form (responses collect in a Sheet)."""
+    url = CONFIG.get('rsvp_form_url', '')
+    src = rsvp_embed_src(url)
+    return f"""      <div class="rsvp-embed">
+        <iframe src="{escape(src)}" title="RSVP form"
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <p class="rsvp-alt">
+        Form not loading?
+        <a href="{escape(url)}" target="_blank" rel="noopener">Open it in a new tab</a>.
+      </p>"""
+
+
+def build_rsvp():
+    contacts_html = "\n".join(
+        f"""<div><span class="who">{c['relation']}</span>{c['name']} | {c['phone']}</div>"""
+        for c in CONFIG['rsvp_contacts']
+    )
+    body = _rsvp_embed_markup() if rsvp_embed_src(CONFIG.get('rsvp_form_url', '')) else _rsvp_form_markup()
+    return f"""
+  <section class="rsvp" id="rsvp">
+    <div class="wrap">
+      <div class="eyebrow">You're invited</div>
+      <h2>RSVP</h2>
+      <p class="lead">We've reserved a seat just for you. Kindly confirm so we can plan with love.</p>
+
+{body}
 
       <div class="rsvp-contacts">
         {contacts_html}
