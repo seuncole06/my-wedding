@@ -28,6 +28,7 @@ embed/link; ask me and I can wire that in.
 import os
 import shutil
 from datetime import datetime
+from html import escape
 
 # ============================================================
 # CONFIG: edit everything here, nothing else needs to change
@@ -110,6 +111,22 @@ CONFIG = {
         "together, and making life beautiful for each other. And oh yes... "
         "he is a fine man too."
     ),
+
+    # ---- Order of the day (edit times/titles freely; add or remove entries) ----
+    "schedule": [
+        {"time": "11:00 AM", "title": "Guest Arrival",
+         "note": "Come early, find your seat, and settle in."},
+        {"time": "12:00 PM", "title": "Wedding Ceremony",
+         "note": "The vows, the rings, the whole thing."},
+        {"time": "1:30 PM", "title": "Photos & Cocktails",
+         "note": "Say cheese with the couple; drinks are on us."},
+        {"time": "3:00 PM", "title": "Reception & Lunch",
+         "note": "Time to eat, dance, and celebrate."},
+        {"time": "5:00 PM", "title": "Cake Cutting & Toasts",
+         "note": "Sweet words and sweeter cake."},
+        {"time": "7:00 PM", "title": "Send-off",
+         "note": "Wave us off as we begin forever."},
+    ],
 
     "rsvp_deadline": "December 30th, 2026",
     "gift_deadline": "November 30th, 2026",
@@ -207,7 +224,7 @@ def build_hero():
 
 def build_countdown():
     return f"""
-  <section class="countdown-section" id="the-day">
+  <section class="countdown-section">
     <div class="wrap">
       <div class="eyebrow">Counting down to forever</div>
       <h2>Save the Date</h2>
@@ -292,6 +309,33 @@ def build_details():
           <p>{CONFIG['kids_note']}</p>
         </div>
       </div>
+    </div>
+  </section>"""
+
+
+def build_schedule():
+    items = "\n".join(
+        f"""      <li class="tl-item">
+        <span class="tl-marker" aria-hidden="true"></span>
+        <div class="tl-card">
+          <div class="tl-time">{escape(e['time'])}</div>
+          <h3>{escape(e['title'])}</h3>
+          <p>{escape(e['note'])}</p>
+        </div>
+      </li>"""
+        for e in CONFIG['schedule']
+    )
+    return f"""
+  <section class="schedule" id="the-day">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Order of the day</div>
+        <h2>The Day</h2>
+        <div class="rule"></div>
+      </div>
+      <ol class="timeline">
+{items}
+      </ol>
     </div>
   </section>"""
 
@@ -426,6 +470,7 @@ def build_page():
 {build_story()}
 {build_vows()}
 {build_details()}
+{build_schedule()}
 {build_gallery()}
 {build_rsvp()}
 {build_gifts()}
