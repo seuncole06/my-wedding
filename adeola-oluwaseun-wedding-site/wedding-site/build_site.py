@@ -163,18 +163,32 @@ def nl2br(text):
 
 def build_nav():
     initials = f"{CONFIG['bride'][0]} &amp; {CONFIG['groom'][0]}"
-    links = ["home", "our story", "details", "gallery", "rsvp", "gifts"]
+    links = [
+        ("Our Story", "our-story"),
+        ("Why", "why"),
+        ("Ceremony", "details"),
+        ("The Day", "the-day"),
+        ("Gift Registry", "gifts"),
+        ("RSVP", "rsvp"),
+    ]
+    panel_links = links + [("Gallery", "gallery")]
     nav_links = "\n".join(
-        f'<a href="#{l.replace(" ", "-")}">{l.title()}</a>' for l in links
+        f'<a href="#{anchor}">{label}</a>' for label, anchor in links
+    )
+    panel_nav_links = "\n".join(
+        f'<a href="#{anchor}">{label}</a>' for label, anchor in panel_links
     )
     return f"""
   <nav class="nav">
-    <div class="monogram">{initials}</div>
+    <a class="monogram" href="#home">{initials}</a>
+    <div class="nav-links">
+      {nav_links}
+    </div>
     <button class="menu-btn" aria-label="Open menu">&#9776;</button>
   </nav>
   <div class="menu-panel">
     <button class="menu-close" aria-label="Close menu">&times;</button>
-    {nav_links}
+    {panel_nav_links}
   </div>"""
 
 
@@ -193,7 +207,7 @@ def build_hero():
 
 def build_countdown():
     return f"""
-  <section class="countdown-section">
+  <section class="countdown-section" id="the-day">
     <div class="wrap">
       <div class="eyebrow">Counting down to forever</div>
       <h2>Save the Date</h2>
@@ -230,7 +244,7 @@ def build_story():
 
 def build_vows():
     return f"""
-  <section class="vows">
+  <section class="vows" id="why">
     <div class="wrap">
       <div class="section-head">
         <div class="eyebrow">Why we're doing this</div>
