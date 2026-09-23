@@ -28,6 +28,7 @@ nothing from that flow, which is why the embed is preferred.
 """
 
 import os
+import re
 import shutil
 from datetime import datetime
 from html import escape
@@ -369,6 +370,23 @@ def build_gallery():
   </section>"""
 
 
+def rsvp_embed_problem(url):
+    """Why the configured RSVP link cannot be embedded, or None if it is fine."""
+    u = (url or "").strip()
+    if not u:
+        return None
+    if "/spreadsheets/d/" in u:
+        return ("rsvp_form_url is a Google Sheets link. A spreadsheet is not a form, and "
+                "embedding it would expose every guest's details on the public page. "
+                "Use the Google Form link instead: in the Form, click Send > Link "
+                "(https://docs.google.com/forms/d/e/.../viewform), and point the form's "
+                "responses at that spreadsheet from the Responses tab.")
+    if "docs.google.com/forms" not in u and "tally.so" not in u:
+        return ("rsvp_form_url is not a recognised Google Form or Tally link, so the "
+                "built-in email form is being used instead.")
+    return None
+
+
 def rsvp_embed_src(url):
     """Turn a Google Form or Tally share link into an embeddable src.
 
@@ -380,9 +398,10 @@ def rsvp_embed_src(url):
         return ""
     # If the whole iframe snippet was pasted, pull the src out of it.
     if "<iframe" in u.lower():
-        import re
         match = re.search(r'src="([^"]+)"', u)
         u = match.group(1) if match else ""
+    if not u or rsvp_embed_problem(u):
+        return ""
 
     joiner = "&" if "?" in u else "?"
     if "tally.so/r/" in u:
@@ -551,6 +570,12 @@ def main():
     html = build_page()
     with open(os.path.join(DIST, "index.html"), "w", encoding="utf-8") as f:
         f.write(html)
+
+    problem = rsvp_embed_problem(CONFIG.get("rsvp_form_url", ""))
+    if problem:
+        print("")
+        print("WARNING about the RSVP form:")
+        print("  " + problem)
 
     print(f"Done. Open {os.path.join(DIST, 'index.html')} in a browser to preview,")
     print("or upload the contents of the dist/ folder to your host.")
