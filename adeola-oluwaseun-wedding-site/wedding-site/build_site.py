@@ -140,12 +140,12 @@ CONFIG = {
     # The couple's own numbers. Drop them in here and their cards appear
     # automatically; any entry without a phone is skipped.
     "rsvp_couple_contacts": [
-        {"name": "Adeola", "phone": "", "relation": "The Bride"},
-        {"name": "Oluwaseun", "phone": "", "relation": "The Groom"},
+        {"name": "Adeola", "phone": "09065497428", "relation": "The Bride"},
+        {"name": "Oluwaseun", "phone": "08138415995", "relation": "The Groom"},
     ],
     "rsvp_contacts": [
-        {"name": "Tosin", "phone": "08164288605", "relation": "Bride's Brother"},
-        {"name": "Omowunmi", "phone": "07043707011", "relation": "Groom's Sister"},
+        {"name": "Tosin", "phone": "08164288605", "relation": "Bride's Brother", "purpose": "directions"},
+        {"name": "Omowunmi", "phone": "07043707011", "relation": "Groom's Sister", "purpose": "directions"},
     ],
     "contact_email": "solagbadeoluwaseun6@gmail.com",
 
@@ -386,15 +386,19 @@ def wa_link(phone, message):
     return "https://wa.me/" + digits + "?text=" + quote(message)
 
 
-def _rsvp_message(person):
-    return (f"Hi {person['name']}, I'd like to reserve a seat at "
+def _contact_message(person):
+    if person.get("purpose") == "directions":
+        return (f"Hi {person['name']}, could you please share directions to "
+                f"the event hall for {CONFIG['bride']} & {CONFIG['groom']}'s "
+                f"wedding on {CONFIG['wedding_date_display']}? Thank you.")
+    return (f"Hi {person['name']}, I'd like to RSVP for "
             f"{CONFIG['bride']} & {CONFIG['groom']}'s wedding on "
             f"{CONFIG['wedding_date_display']}. My name is ")
 
 
 def _person_card(person):
     phone = person.get("phone", "")
-    link = wa_link(phone, _rsvp_message(person))
+    link = wa_link(phone, _contact_message(person))
     button = ('<a class="wa-btn" href="' + escape(link) + '" target="_blank" '
               'rel="noopener">Chat on WhatsApp</a>') if link else ""
     return f"""      <div class="person-card">
@@ -406,18 +410,28 @@ def _person_card(person):
 
 
 def build_rsvp():
-    people = [p for p in CONFIG['rsvp_couple_contacts'] if p.get('phone')]
-    people += [p for p in CONFIG['rsvp_contacts'] if p.get('phone')]
-    cards = "\n".join(_person_card(p) for p in people)
+    couple = [p for p in CONFIG['rsvp_couple_contacts'] if p.get('phone')]
+    directions = [p for p in CONFIG['rsvp_contacts'] if p.get('phone')]
+    couple_cards = "\n".join(_person_card(p) for p in couple)
+    direction_cards = "\n".join(_person_card(p) for p in directions)
     return f"""
   <section class="rsvp" id="rsvp">
     <div class="wrap">
       <div class="eyebrow">You're invited</div>
       <h2>RSVP</h2>
-      <p class="lead">We've reserved a seat just for you. Send a WhatsApp message to any of the people below to let us know you're coming, and we'll keep your seat warm.</p>
+      <p class="lead">We've reserved a seat just for you. Send a WhatsApp message to the bride or groom to RSVP. For directions to the event hall, contact Tosin or Omowunmi.</p>
 
-      <div class="rsvp-people">
-{cards}
+      <div class="contact-group">
+        <h3 class="contact-group-title">RSVP to the Couple</h3>
+        <div class="rsvp-people">
+{couple_cards}
+        </div>
+      </div>
+      <div class="contact-group">
+        <h3 class="contact-group-title">Event Hall Directions</h3>
+        <div class="rsvp-people">
+{direction_cards}
+        </div>
       </div>
       <div class="rsvp-deadline">Kindly confirm by {CONFIG['rsvp_deadline']}</div>
     </div>

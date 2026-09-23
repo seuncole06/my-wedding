@@ -437,14 +437,22 @@ section[id] { scroll-margin-top: 84px; }
 .rsvp .eyebrow { color: var(--gold-light); }
 .rsvp h2 { color: var(--ivory); }
 .rsvp p.lead { max-width: 46ch; margin: 18px auto 0; color: var(--ivory); opacity: .9; }
-/* People to message on WhatsApp to reserve a seat */
+/* Separate RSVP and event-hall directions contact groups */
+.contact-group { margin-top: 36px; }
+.contact-group + .contact-group { margin-top: 32px; }
+.contact-group-title {
+  color: var(--gold-light);
+  font-size: 24px;
+  font-style: italic;
+  margin: 0;
+}
 .rsvp-people {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 22px;
   max-width: 720px;
-  margin: 44px auto 0;
+  margin: 18px auto 0;
 }
 .person-card {
   flex: 1 1 240px;
