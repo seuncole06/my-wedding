@@ -57,6 +57,7 @@ CONFIG = {
                  "so we can prepare adequately for them.",
 
     "how_we_met": (
+<<<<<<< HEAD
         "It all started on the 14th of January 2021.\n\n"
         "I was heading back to Abeokuta after celebrating my dad's birthday "
         "when, on the bus, I spotted her and her sister. Of course, I "
@@ -81,6 +82,16 @@ CONFIG = {
         "one Facebook like somehow led us here.\n\n"
         "Five years later, I guess that 'NO' was just the beginning of our "
         "YES. ❤️"
+=======
+        "On the 14th of January 2021, I was heading back to Abeokuta after "
+        "my dad's birthday when I saw her and her sister on the bus. I tried "
+        "to get her number she said no. So I found another way: I got her "
+        "to like a post of mine on Facebook, and that's how her number found "
+        "its way to me. She was a 100 level student at the time, so I stayed "
+        "a friend until that June, when we finally started dating. I waited "
+        "for her to finish school and settle into work before I asked her to "
+        "be my wife. Five years later, here we are."
+>>>>>>> 74a5942 (update)
     ),
 
     "vow_groom": (
