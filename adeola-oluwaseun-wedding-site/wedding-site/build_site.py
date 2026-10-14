@@ -399,8 +399,8 @@ def _contact_message(person):
 def _person_card(person):
     phone = person.get("phone", "")
     link = wa_link(phone, _contact_message(person))
-    button = ('<a class="wa-btn" href="' + escape(link) + '" target="_blank" '
-              'rel="noopener">Chat on WhatsApp</a>') if link else ""
+    button = ('<a class="wa-btn" href="' + escape(link) + '" '
+              'rel="noopener">Send an Email</a>') if link else ""
     return f"""      <div class="person-card">
         <div class="person-role">{escape(person.get('relation', ''))}</div>
         <div class="person-name">{escape(person['name'])}</div>
